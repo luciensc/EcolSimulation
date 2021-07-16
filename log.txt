@@ -1,0 +1,4 @@
+V1:
+simulation of 1 species under different settings.
+proof of concept implementation.
+investigate e.g. different ecological distributions & reproduction strategies -> resilience to perturbation
