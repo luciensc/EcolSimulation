@@ -1,4 +1,13 @@
-V1:
-simulation of 1 species under different settings.
-proof of concept implementation.
-investigate e.g. different ecological distributions & reproduction strategies -> resilience to perturbation
+LOG/ROADMAP
+1. basic implementation. script like
+2. OOP
+3. simplified model (resources = fitness), improved visualisation
+
+TODO:
+start experiments:
+- show effects of different parameters on sigmoid curve (higher decay, binary fitness, bernoulli patches)
+- deletion experiment: initialise at full coverage -> erase patch -> observe recoverage for different resource distributions
+    => combine with reproductive strategies (e.g. trade-off dispersal & likelihood of establishment)
+
+
+(- frequency associated effect, interactions with resources, add multiple species => evolutionary simulations)
