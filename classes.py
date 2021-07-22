@@ -1,7 +1,7 @@
 import numpy as np
 
 class Grid:
-    def __init__(self, length, disp_decay, seed_ecol=1859, seed_biol=376, n_spawn=10):
+    def __init__(self, length, disp_decay, ecol_distr, seed_ecol=1859, seed_biol=376, n_spawn=10):
         self.length = length
         self.disp_decay = disp_decay
 
@@ -11,24 +11,29 @@ class Grid:
                 self.all_cells.append((i, j))
 
         # init ecol
-        np.random.seed(1859)
-        self.ecol = np.random.random((self.length, self.length))
+        np.random.seed(seed_ecol)
+        if ecol_distr == "random_uniform":
+            self.ecol = np.random.random((self.length, self.length))
+        elif ecol_distr == "random_binary":
+            self.ecol = np.random.binomial(1,0.5,(self.length, self.length))
+        else:
+            raise Exception(f"unexpected type of ecol distribution specified: {ecol_distr}")
 
         # init biol
-        np.random.seed(1859)
+        np.random.seed(seed_biol)
         self.biol = np.zeros(self.ecol.shape)
         # spawn initial occurring spots
         for i in range(n_spawn):
-            R = self.random_pos()
-            self.biol[R[0], R[1]] = 1
+            p = self.random_pos()
+            self.biol[p[0], p[1]] = 1
 
         # init reproductive potential
         self.reproduction = np.full(self.ecol.shape, np.nan)
 
-    def step(self, fitness_fxn, bernoulli=True):
-        # calc reproductive potential per cell:  reproduction_ij = biol_ij*fitness(ecol_ij)
+    def step(self, bernoulli):
+        # calc reproductive potential per cell:  reproduction_ij = biol_ij*ecol_ij   # fitness(ecol_ij)
         for i, j in self.all_cells:
-            self.reproduction[i, j] = self.biol[i, j] * fitness_fxn(self.ecol[i, j])
+            self.reproduction[i, j] = self.biol[i, j] * self.ecol[i, j]  # fitness_fxn(self.ecol[i, j], fit=self.fitness_type)
 
         # disperse
         # for each cell: add decayed reproductive potential to all cells (incl. self)
@@ -42,15 +47,10 @@ class Grid:
 
         # update
         self.biol = np.clip(biol_NEW, a_min=0, a_max=1)
+        # bernoulli sampling: ^= simulating population with each grid having a carrying capacity of 1 individual
+        # => stochasticity
         if bernoulli:
             self.biol = np.random.binomial(1, self.biol)  # bernoulli sampling for stochastic component
-
-        # To try: add other species. impose some restrictions on fitness distribution
-        # To try: investigate population resilience under different modes of reproduction / resource landscape
-        # e.g. orchids: have low dispersal decay, sparse landscape, with high temporal variation.
-        # - perhaps interesting to see effect of perturbance on landscape plots / population
-        # - try to demonstrate that strategy can evolve: e.g. trade-off of growth speed & dispersal-decay
-
 
 
     ### general auxiliary functions:
