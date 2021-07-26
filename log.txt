@@ -5,7 +5,7 @@ LOG/ROADMAP
 
 TODO:
 start experiments:
-- show effects of different parameters on sigmoid curve (higher decay, binary fitness, bernoulli patches)
+- show effects of different parameters on sigmoid curve (binary fitness, higher decay, bernoulli patches)
 - deletion experiment: initialise at full coverage -> erase patch -> observe recoverage for different resource distributions
     => combine with reproductive strategies (e.g. trade-off dispersal & likelihood of establishment)
 

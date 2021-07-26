@@ -1,7 +1,7 @@
 import numpy as np
 
 class Grid:
-    def __init__(self, length, disp_decay, ecol_distr, seed_ecol=1859, seed_biol=376, n_spawn=10):
+    def __init__(self, length, disp_decay, ecol_distr, seed_ecol=1859, seed_spawn=376, n_spawn=10):
         self.length = length
         self.disp_decay = disp_decay
 
@@ -20,7 +20,7 @@ class Grid:
             raise Exception(f"unexpected type of ecol distribution specified: {ecol_distr}")
 
         # init biol
-        np.random.seed(seed_biol)
+        np.random.seed(seed_spawn)
         self.biol = np.zeros(self.ecol.shape)
         # spawn initial occurring spots
         for i in range(n_spawn):
