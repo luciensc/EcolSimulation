@@ -1,4 +1,5 @@
 import numpy as np
+from joblib import Parallel, delayed
 
 class Grid:
     def __init__(self, length, disp_decay, ecol_distr, seed_ecol=1859, seed_spawn=376, n_spawn=10):
@@ -26,31 +27,35 @@ class Grid:
         for i in range(n_spawn):
             p = self.random_pos()
             self.biol[p[0], p[1]] = 1
+        # TODO: different init fxn with exact, specified amount of rep. potential
 
         # init reproductive potential
         self.reproduction = np.full(self.ecol.shape, np.nan)
 
-    def step(self, bernoulli):
+    def step(self, bernoulli, n_jobs=1):
         # calc reproductive potential per cell:  reproduction_ij = biol_ij*ecol_ij   # fitness(ecol_ij)
         for i, j in self.all_cells:
             self.reproduction[i, j] = self.biol[i, j] * self.ecol[i, j]  # fitness_fxn(self.ecol[i, j], fit=self.fitness_type)
 
         # disperse
         # for each cell: add decayed reproductive potential to all cells (incl. self)
-        biol_NEW = np.zeros(shape=self.biol.shape)
+        self.biol_NEW = np.zeros(shape=self.biol.shape)
         # TODO: loop in parallel?
-        for i, j in self.all_cells:
-            for p, q in self.neighbours(i, j):  # considering only moore k-neighbours
-                                                # => considerable speed up for larger grids
-                biol_NEW[p, q] \
-                    += self.reproduction[i, j] * 1 / np.power((1 + self.distance(i, j, p, q)), self.disp_decay)
+        Parallel(n_jobs=n_jobs)(delayed(self.disperse_potential)(i, j) for i, j in self.all_cells)
 
         # update
-        self.biol = np.clip(biol_NEW, a_min=0, a_max=1)
+        self.biol = np.clip(self.biol_NEW, a_min=0, a_max=1)
         # bernoulli sampling: ^= simulating population with each grid having a carrying capacity of 1 individual
         # => stochasticity
         if bernoulli:
             self.biol = np.random.binomial(1, self.biol)  # bernoulli sampling for stochastic component
+
+    # add reproductive potential of cell i,j to its neighbours
+    def disperse_potential(self, i, j):
+        for p, q in self.neighbours(i, j):  # considering only moore k-neighbours
+            # => considerable speed up for larger grids
+            self.biol_NEW[p, q] \
+                += self.reproduction[i, j] * 1 / np.power((1 + self.distance(i, j, p, q)), self.disp_decay)
 
 
     ### general auxiliary functions:

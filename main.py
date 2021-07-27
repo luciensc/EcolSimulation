@@ -5,6 +5,7 @@ from matplotlib import cm
 from datetime import datetime as dtt
 import os
 import pickle
+import time
 
 from classes import Grid
 
@@ -16,20 +17,20 @@ ecological simulation
 seasonal organism
 """
 save = False
-description = ""  # optional descriptor of current experiment for logging purposes
+description = "BINARY"  # optional descriptor of current experiment for logging purposes
 
-n_run = 50
-plot_freq = 5
+n_run = 100
+plot_freq = 100
 
 LENGTH = 20  # square grid length
 DISPERSAL_DECAY = 5  # exponent for decay. higher exponent -> faster decay.
-N_SPAWN = 1000  # how many cells on the grid are initialised with an organism
+N_SPAWN = 100  # how many cells on the grid are initialised with an organism
 ecol_distr_types = ["random_uniform", "random_binary"]
 ECOL_DISTR = ecol_distr_types[1]
 
 seed_sim = 42
 seed_ecol = 1859
-seed_spawn = 376
+seed_spawn = 378
 
 params = {"n_run": n_run, "length":LENGTH, "dispersal_decay":DISPERSAL_DECAY, "n_spawn":N_SPAWN,
           "ecol_distr":ECOL_DISTR, "seed_sim":seed_sim, "seed_ecol":seed_ecol, "seed_spawn":seed_spawn}
@@ -47,11 +48,12 @@ plt.show()
 
 log = []
 ### START SIMULATION
+t0 = time.time()
 np.random.seed(seed_sim)
 for t in range(n_run):
     print(t)
 
-    grid.step(bernoulli=True)
+    grid.step(bernoulli=True, n_jobs=3)
     log.append(np.sum(np.sum(grid.reproduction)))
 
     # PLOT REPRODUCTIVE POTENTIAL
@@ -66,6 +68,7 @@ for t in range(n_run):
         ax2.set_xlim([0, n_run])
         plt.show()
 
+# save log, parameters, and population dynamics plot into folder
 if save:
     path = "experiments/"
     path += dtt.now().strftime("%d%m%Y_%H%M")
@@ -89,4 +92,4 @@ if save:
     plt.savefig(path+"pop_dyn")
 
 
-print("")
+print(f"elapsed time: {time.time()-t0} s")
