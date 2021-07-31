@@ -17,23 +17,25 @@ ecological simulation
 seasonal organism
 """
 save = False
-description = "BINARY"  # optional descriptor of current experiment for logging purposes
+description = "Uniform_Decay4"  # optional descriptor of current experiment for logging purposes
 
 n_run = 100
-plot_freq = 100
+plot_freq = 1
 
-LENGTH = 20  # square grid length
-DISPERSAL_DECAY = 5  # exponent for decay. higher exponent -> faster decay.
-N_SPAWN = 100  # how many cells on the grid are initialised with an organism
+LENGTH = 50  # square grid length
+DISPERSAL_DECAY = 4  # exponent for decay. higher exponent -> faster decay.
+N_SPAWN = 1  # how many cells on the grid are initialised with an organism
 ecol_distr_types = ["random_uniform", "random_binary"]
-ECOL_DISTR = ecol_distr_types[1]
+ECOL_DISTR = ecol_distr_types[0]
+BERNOULLI = False
 
 seed_sim = 42
 seed_ecol = 1859
-seed_spawn = 378
+seed_spawn = 376
 
 params = {"n_run": n_run, "length":LENGTH, "dispersal_decay":DISPERSAL_DECAY, "n_spawn":N_SPAWN,
-          "ecol_distr":ECOL_DISTR, "seed_sim":seed_sim, "seed_ecol":seed_ecol, "seed_spawn":seed_spawn}
+          "ecol_distr":ECOL_DISTR, "seed_sim":seed_sim, "seed_ecol":seed_ecol, "seed_spawn":seed_spawn,
+          "bernoulli":BERNOULLI}
 
 #####################################
 
@@ -53,7 +55,7 @@ np.random.seed(seed_sim)
 for t in range(n_run):
     print(t)
 
-    grid.step(bernoulli=True, n_jobs=3)
+    grid.step(bernoulli=BERNOULLI, n_jobs=3)
     log.append(np.sum(np.sum(grid.reproduction)))
 
     # PLOT REPRODUCTIVE POTENTIAL
