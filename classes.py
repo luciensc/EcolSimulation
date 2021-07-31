@@ -35,7 +35,8 @@ class Grid:
     def step(self, bernoulli, n_jobs=1):
         # calc reproductive potential per cell:  reproduction_ij = biol_ij*ecol_ij   # fitness(ecol_ij)
         for i, j in self.all_cells:
-            self.reproduction[i, j] = self.biol[i, j] * self.ecol[i, j]  # fitness_fxn(self.ecol[i, j], fit=self.fitness_type)
+            # reproductive potential may not exceed local fitness (self.ecol_ij)
+            self.reproduction[i, j] = np.clip(self.biol[i, j], 0, self.ecol[i, j])  # fitness_fxn(self.ecol[i, j], fit=self.fitness_type)
 
         # disperse
         # for each cell: add decayed reproductive potential to all cells (incl. self)
