@@ -40,23 +40,32 @@ class Grid:
         # disperse
         # for each cell: add decayed reproductive potential to all cells (incl. self)
         self.biol_NEW = np.zeros(shape=self.biol.shape)
-        # TODO: loop in parallel?
-        Parallel(n_jobs=n_jobs)(delayed(self.disperse_potential)(i, j) for i, j in self.all_cells)
+        potential = Parallel(n_jobs=n_jobs)(delayed(self.incoming_potential)(i, j) for i, j in self.all_cells)
+        potential = np.array(potential).reshape(self.length, self.length)
 
         # update
-        self.biol = np.clip(self.biol_NEW, a_min=0, a_max=1)
+        # corresponds to currently non-reproductive "growth" phase of the "organisms"
+        # includes patches where can live, but is unable to reproduce!
+        self.biol = np.clip(potential, a_min=0, a_max=1)
         # bernoulli sampling: ^= simulating population with each grid having a carrying capacity of 1 individual
         # => stochasticity
         if bernoulli:
             self.biol = np.random.binomial(1, self.biol)  # bernoulli sampling for stochastic component
 
-    # add reproductive potential of cell i,j to its neighbours
-    def disperse_potential(self, i, j):
+    # # TODO: paradigm shift: don't *disperse* potential, but calculate incoming potential from neighbours for current cell
+    # # add reproductive potential of cell i,j to its neighbours
+    # def disperse_potential(self, i, j):
+    #     for p, q in self.neighbours(i, j):  # considering only moore k-neighbours
+    #         # => considerable speed up for larger grids
+    #         self.biol_NEW[p, q] \
+    #             += self.reproduction[i, j] * 1 / np.power((1 + self.distance(i, j, p, q)), self.disp_decay)
+
+    def incoming_potential(self, i, j):
+        pot = 0
         for p, q in self.neighbours(i, j):  # considering only moore k-neighbours
             # => considerable speed up for larger grids
-            self.biol_NEW[p, q] \
-                += self.reproduction[i, j] * 1 / np.power((1 + self.distance(i, j, p, q)), self.disp_decay)
-
+            pot += self.reproduction[p, q] * 1 / np.power((1 + self.distance(i, j, p, q)), self.disp_decay)
+        return pot
 
     ### general auxiliary functions:
 
@@ -67,6 +76,8 @@ class Grid:
         return np.linalg.norm(np.array([i, j]) - np.array([p, q]))
 
     def neighbours(self, i, j, k=5):
+        # includes self
+        # TODO: consider dispersal decay exponent for choice of k
         # for a large enough decay exponent: considering neighbors beyond 4 or 5 becomes ~negligible
         neigh = k  # moore neighbourhood
         i_low = np.clip(i - neigh, 0, self.length)
