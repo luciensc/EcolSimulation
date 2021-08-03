@@ -7,7 +7,7 @@ import os
 import pickle
 import time
 
-from classes import Grid
+from grid import Grid
 
 """
 ecological simulation
@@ -19,11 +19,11 @@ seasonal organism
 save = False
 description = "Uniform_Decay4"  # optional descriptor of current experiment for logging purposes
 
-n_run = 100
+n_run = 10
 plot_freq = 1
 
 LENGTH = 50  # square grid length
-DISPERSAL_DECAY = 4  # exponent for decay. higher exponent -> faster decay.
+DISPERSAL_DECAY = 5  # exponent for decay. higher exponent -> faster decay.
 N_SPAWN = 1  # how many cells on the grid are initialised with an organism
 ecol_distr_types = ["random_uniform", "random_binary"]
 ECOL_DISTR = ecol_distr_types[0]
@@ -53,13 +53,14 @@ log = []
 t0 = time.time()
 np.random.seed(seed_sim)
 for t in range(n_run):
-    print(t)
+    print(f"iteration {t}")
 
     grid.step(bernoulli=BERNOULLI, n_jobs=3)
     log.append(np.sum(np.sum(grid.reproduction)))
 
     # PLOT REPRODUCTIVE POTENTIAL
     if t%plot_freq == 0:
+        plt.close()
         fig, (ax1, ax2) = plt.subplots(1, 2)
         fig.suptitle(f"time = {t}")
         ax1.imshow(grid.reproduction, cmap=cm.get_cmap("Greens"), vmin=0,)
@@ -68,7 +69,11 @@ for t in range(n_run):
         ax2.scatter(range(len(log)), np.array(log))
         ax2.set_title("population dynamics")
         ax2.set_xlim([0, n_run])
-        plt.show()
+        plt.show(block=False)
+        plt.pause(0.00001)
+
+delta_t = time.time() - t0
+print(f"duration of loop: {np.round(delta_t, 0)} s\naverage iteration duration: {np.round(delta_t/n_run, 2)} s")
 
 # save log, parameters, and population dynamics plot into folder
 if save:
@@ -94,4 +99,3 @@ if save:
     plt.savefig(path+"pop_dyn")
 
 
-print(f"elapsed time: {time.time()-t0} s")
