@@ -8,6 +8,7 @@ import pickle
 import time
 
 from grid import Grid
+from aux_functions import *
 
 """
 ecological simulation
@@ -16,15 +17,15 @@ ecological simulation
 
 seasonal organism
 """
-save = False
-description = "Uniform_Decay4"  # optional descriptor of current experiment for logging purposes
+save = True
+description = "uniform_decay4"  # optional descriptor of current experiment for logging purposes
 
-n_run = 10
-plot_freq = 1
+n_run = 30
+plot_freq = 5
 
 LENGTH = 50  # square grid length
-DISPERSAL_DECAY = 5  # exponent for decay. higher exponent -> faster decay.
-N_SPAWN = 1  # how many cells on the grid are initialised with an organism
+DISPERSAL_DECAY = 4  # exponent for decay. higher exponent -> faster decay.
+N_SPAWN = 10  # how many cells on the grid are initialised with an organism
 ecol_distr_types = ["random_uniform", "random_binary"]
 ECOL_DISTR = ecol_distr_types[0]
 BERNOULLI = False
@@ -45,7 +46,7 @@ grid = Grid(length=LENGTH, disp_decay=DISPERSAL_DECAY, ecol_distr=ECOL_DISTR, n_
 matplotlib.rcParams['figure.figsize'] = [14.0, 6.0]
 
 plt.imshow(grid.ecol, cmap=cm.get_cmap("Blues"), vmin=0, vmax=1,)
-plt.title(f"resource distribution. total resources: {np.sum(np.sum(grid.ecol))}")
+plt.title(f"resource distribution. total resources: {np.rint(np.sum(np.sum(grid.ecol)))}")
 plt.show()
 
 log = []
@@ -60,20 +61,10 @@ for t in range(n_run):
 
     # PLOT REPRODUCTIVE POTENTIAL
     if t%plot_freq == 0:
-        plt.close()
-        fig, (ax1, ax2) = plt.subplots(1, 2)
-        fig.suptitle(f"time = {t}")
-        ax1.imshow(grid.reproduction, cmap=cm.get_cmap("Greens"), vmin=0,)
-        ax1.set_title(f"spatial distribution of reproductive potential")
-        ax2.plot(np.array(log))
-        ax2.scatter(range(len(log)), np.array(log))
-        ax2.set_title("population dynamics")
-        ax2.set_xlim([0, n_run])
-        plt.show(block=False)
-        plt.pause(0.00001)
+        plot_grid_pop(grid, t, log, n_run, block_img=False)
 
 delta_t = time.time() - t0
-print(f"duration of loop: {np.round(delta_t, 0)} s\naverage iteration duration: {np.round(delta_t/n_run, 2)} s")
+print(f"duration of loop: {np.rint(delta_t)} s\naverage iteration duration: {np.round(delta_t/n_run, 2)} s")
 
 # save log, parameters, and population dynamics plot into folder
 if save:
@@ -92,10 +83,11 @@ if save:
     pickle.dump(log, log_file)
     log_file.close()
 
-    plt.plot(np.array(log))
-    plt.scatter(range(len(log)), np.array(log))
+    plt.plot(np.array(log), color="black")
+    plt.scatter(range(len(log)), np.array(log), color="black")
     plt.title("population dynamics")
     plt.xlim([0, n_run])
+    # TODO: ylim based on expected maximum
     plt.savefig(path+"pop_dyn")
 
 
