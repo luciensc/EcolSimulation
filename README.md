@@ -1,6 +1,6 @@
 # EcolSimulation
 
-####WORK IN PROGRESS
+#### WORK IN PROGRESS
 
 This project considers the simulation of population dynamics in a spatially explicit manner.
 
