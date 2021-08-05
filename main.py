@@ -18,7 +18,7 @@ ecological simulation
 seasonal organism
 """
 
-n_run = 5
+n_run = 40
 plot_freq = 1
 
 LENGTH = 50  # square grid length
@@ -29,11 +29,11 @@ ECOL_DISTR = ecol_distr_types[0]
 BERNOULLI = False
 
 seed_ecol = 1859  # initialisation of fitness distribution (grid.ecol)
-seed_spawn = 376  # selection of intially populated cells in the grid
+seed_spawn = 378  # selection of intially populated cells in the grid
 seed_sim = 42  # stochastic effects during simulation
 
 save = True
-gif = True  # may only be True if 'save' is True
+gif = False  # may only be True if 'save' is True
 # optional descriptor of current experiment for logging purposes
 description = "VARIANCE__decay" + str(DISPERSAL_DECAY) + "_ecol" + str(seed_ecol) + "_spawn" + str(seed_spawn)
 
@@ -62,10 +62,10 @@ grid = Grid(length=LENGTH, disp_decay=DISPERSAL_DECAY, ecol_distr=ECOL_DISTR, n_
 matplotlib.rcParams['figure.figsize'] = [14.0, 6.0]
 
 # plot initial resource distribution
-plt.imshow(grid.ecol, cmap=cm.get_cmap("Blues"), vmin=0, vmax=1,)
+# plt.imshow(grid.ecol, cmap=cm.get_cmap("Blues"), vmin=0, vmax=1,)
 max_resources = np.sum(np.sum(grid.ecol))
-plt.title(f"resource distribution. total resources: {int(np.rint(max_resources))}")
-plt.show()
+# plt.title(f"resource distribution. total resources: {int(np.rint(max_resources))}")
+# plt.show()
 
 log = []
 

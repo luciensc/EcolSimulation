@@ -26,7 +26,8 @@ def plot_grid_pop(grid, t, log, n_run, save_path=None, ylim=None, block_img=Fals
     plt.pause(0.00001)
 
     if save_path:
-        plt.savefig(save_path + "plot_"+str(t))
+        leading_zeros = int(np.floor(np.log10(n_run))+1)
+        plt.savefig(save_path + f"plot_{t:0{leading_zeros}}")
 
     plt.close()
 
