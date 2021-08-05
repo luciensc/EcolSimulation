@@ -5,9 +5,15 @@ LOG/ROADMAP
 
 TODO:
 start experiments:
-- show effects of different parameters on sigmoid curve (binary fitness, higher decay, bernoulli patches)
-- deletion experiment: initialise at full coverage -> erase patch -> observe recoverage for different resource distributions
+continuously distributed ecol/fitness values, no stochastic population (i.e. BERNOULLI = False)
+- compare different decay params on same grid over time
+- grid vs init variance
+
+investigate effect of different spatial resource/fitness distributions (continuous, binary, non-random)
+    - investigate cases where v low dispersal can lead to not reaching carrying capacity
+    - deletion experiment: initialise at full coverage -> erase patch -> observe recovery for different resource distributions
     => combine with reproductive strategies (e.g. trade-off dispersal & likelihood of establishment)
 
+- variation of plot fitness over time
 
 (- frequency associated effect, interactions with resources, add multiple species => evolutionary simulations)
