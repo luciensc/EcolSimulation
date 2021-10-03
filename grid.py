@@ -6,6 +6,7 @@ class Grid:
         self.length = length
         self.disp_decay = disp_decay
 
+        # list of all cells for iteration purposes
         self.all_cells = []
         for i in range(self.length):
             for j in range(self.length):
@@ -65,7 +66,7 @@ class Grid:
         pot = 0
         for p, q in self.neighbours(i, j):  # considering only moore k-neighbours
             # => considerable speed up for larger grids
-            pot += self.reproduction[p, q] * 1 / np.power((1 + self.distance(i, j, p, q)), self.disp_decay)
+            pot += self.reproduction[p, q] * np.power((1 + self.distance(i, j, p, q)), -1*self.disp_decay)
         return pot
 
     ### general auxiliary functions:
