@@ -7,8 +7,8 @@
 # import pickle
 # import time
 
-from grid import Grid
-from run_functions import run_simulation
+from aux_grid import Grid
+from aux_run_functions import run_simulation
 """
 ecological simulation
 

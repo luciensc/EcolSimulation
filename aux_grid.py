@@ -2,6 +2,15 @@ import numpy as np
 from joblib import Parallel, delayed
 
 class Grid:
+    """
+    Contain several matrices of dimension L x L tracking different aspects of the simulation:
+        - self.ecol: each value represents the fit of the organism with the local patch.
+            values range from 0 to 1, and represents the maximum reproductive potential possible on a patch.
+        - self.biol: represents the presence of the organism on a patch. can either be continuous (0-1) or
+            binary (if 'bernoulli' is true in the step function.). => either a large or small patch (org. can occur or not).
+            Includes patches where can live, but is unable to reproduce!
+        - self.reproduction: denotes the reproductive potential calculated for a patch.
+    """
     def __init__(self, length, disp_decay, ecol_distr, seed_ecol=1859, seed_spawn=376, n_spawn=10):
         self.length = length
         self.disp_decay = disp_decay
@@ -54,7 +63,7 @@ class Grid:
         if bernoulli:
             self.biol = np.random.binomial(1, self.biol)  # bernoulli sampling for stochastic component
 
-    # # TODO: paradigm shift: don't *disperse* potential, but calculate incoming potential from neighbours for current cell
+    # # PARADIGM SHIFT: don't *disperse* potential, but calculate incoming potential from neighbours for current cell
     # # add reproductive potential of cell i,j to its neighbours
     # def disperse_potential(self, i, j):
     #     for p, q in self.neighbours(i, j):  # considering only moore k-neighbours

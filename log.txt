@@ -5,7 +5,10 @@ LOG/ROADMAP
 
 TODO:
 start experiments:
-- repeat runs: stochastic effect of multiple initialisations on same grid
+- repeat runs with N_SPAWN=1, N_SPAWN=10: assess variability; contrast behaviour with non-spatial results
+
+
+
 continuously distributed ecol/fitness values, no stochastic population (i.e. BERNOULLI = False)
 - compare different decay params on same grid over time
 - grid vs init variance
